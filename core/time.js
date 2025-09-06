@@ -1,53 +1,37 @@
 // /core/time.js
-// Local time helpers (day keys, week starts, stamps). Monday-week.
+// Day keys, weekday indices, week start, safe addDays.
 
 export function todayKey(d = new Date()) {
-  // Use local time; format YYYY-MM-DD
-  const y = d.getFullYear();
-  const m = `${d.getMonth()+1}`.padStart(2,'0');
-  const day = `${d.getDate()}`.padStart(2,'0');
+  const dt = new Date(d);
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth() + 1).padStart(2, '0');
+  const day = String(dt.getDate()).padStart(2, '0');
   return `${y}-${m}-${day}`;
 }
 
-export function weekStartOf(d = new Date()) {
-  // Monday = 1
-  const dd = new Date(d);
-  const day = dd.getDay(); // 0..6 (Sun..Sat)
-  const diff = (day === 0 ? -6 : 1 - day); // move to Monday
-  dd.setDate(dd.getDate() + diff);
-  return todayKey(dd);
-}
-
-export function isBeforeToday(dayKeyStr) {
-  const t = todayKey();
-  return dayKeyStr < t;
-}
-
-export function isSameDay(a, b) {
-  return a === b;
-}
-
-export function nowTs() {
-  return Date.now();
-}
-
-export function addDays(dayKeyStr, n) {
-  const [y,m,d] = dayKeyStr.split('-').map(Number);
-  const dt = new Date(y, m-1, d);
+export function addDays(dayOrKey, n) {
+  const dt = typeof dayOrKey === 'string' ? parseKey(dayOrKey) : new Date(dayOrKey);
   dt.setDate(dt.getDate() + n);
   return todayKey(dt);
 }
 
-export function weekdayIndex(dayKeyStr) {
-  const [y,m,d] = dayKeyStr.split('-').map(Number);
-  const dt = new Date(y, m-1, d);
-  return dt.getDay(); // 0..6
+export function weekdayIndex(dayOrKey = new Date()) {
+  const dt = typeof dayOrKey === 'string' ? parseKey(dayOrKey) : new Date(dayOrKey);
+  // 0=Sun..6=Sat (matches UI chips)
+  return dt.getDay();
 }
 
-export function daysBetween(aKey, bKey) {
-  const [ay,am,ad] = aKey.split('-').map(Number);
-  const [by,bm,bd] = bKey.split('-').map(Number);
-  const a = new Date(ay, am-1, ad);
-  const b = new Date(by, bm-1, bd);
-  return Math.round((b - a) / 86400000);
+export function weekStartOf(d = new Date()) {
+  const dt = new Date(d);
+  // Start week on Monday
+  const day = (dt.getDay() + 6) % 7; // 0=Mon..6=Sun
+  dt.setDate(dt.getDate() - day);
+  return todayKey(dt);
+}
+
+export function nowTs() { return Date.now(); }
+
+function parseKey(k) {
+  const [y, m, d] = k.split('-').map(Number);
+  return new Date(y, m - 1, d);
 }
