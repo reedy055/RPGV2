@@ -2,262 +2,287 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-  />
-  <meta name="theme-color" content="#0B0F14" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Life RPG</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#101722" />
+  <title>Nebula Life RPG</title>
 
-  <!-- PWA manifest (added later in this build) -->
-  <link rel="manifest" href="manifest.webmanifest" />
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.webmanifest" />
 
-  <!-- App styles (added next) -->
-  <link rel="stylesheet" href="styles.css" />
+  <!-- Styles -->
+  <link rel="stylesheet" href="./styles.css" />
 </head>
-<body class="theme-nebula">
-  <noscript>
-    <div style="padding:16px;color:#fff;background:#000;">
-      This app needs JavaScript enabled.
-    </div>
-  </noscript>
+<body>
 
-  <!-- App Shell -->
-  <div id="app" class="app-shell">
-    <!-- Main content area (tabs render here) -->
-    <main id="content" class="content" role="main" aria-live="polite">
-      <!-- HOME -->
-      <section id="tab-home" class="tab is-active" role="region" aria-label="Home">
-        <!-- Rendered by /ui/home.js -->
+  <!-- ================= SVG ICON SPRITE ================= -->
+  <svg width="0" height="0" style="position:absolute;visibility:hidden;">
+    <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 11l9-8 9 8" />
+      <path d="M9 22V12h6v10" />
+    </symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+    </symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 3v18h18" />
+      <rect x="7" y="12" width="3" height="6" />
+      <rect x="12" y="9" width="3" height="9" />
+      <rect x="17" y="5" width="3" height="13" />
+    </symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 3.3l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.66.27 1.13.92 1.13 1.67 0 .75-.47 1.4-1.13 1.67z"/>
+    </symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 5v14M5 12h14" />
+    </symbol>
+    <symbol id="i-coin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="12" cy="5" rx="9" ry="3" />
+      <path d="M3 5v6c0 1.7 4 3 9 3s9-1.3 9-3V5M3 11v6c0 1.7 4 3 9 3s9-1.3 9-3v-6" />
+    </symbol>
+    <symbol id="i-dice" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <circle cx="8.5" cy="8.5" r="1.5" />
+      <circle cx="15.5" cy="15.5" r="1.5" />
+    </symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+    </symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="3 6 5 6 21 6" />
+      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+      <line x1="10" y1="11" x2="10" y2="17" />
+      <line x1="14" y1="11" x2="14" y2="17" />
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 6L9 17l-5-5" />
+    </symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M23 4v6h-6" />
+      <path d="M1 20v-6h6" />
+      <path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10M1 14l5.37 4.37A9 9 0 0 0 20.49 15" />
+    </symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" y1="3" x2="12" y2="15" />
+    </symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </symbol>
+  </svg>
+
+  <!-- ================= APP CHROME ================= -->
+  <div id="app">
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="brand">Nebula</div>
+      <button class="iconbtn" id="coins-button" onclick="document.getElementById('drawer-rewards').classList.add('open');">
+        <svg class="icon"><use href="#i-coin"/></svg>
+      </button>
+    </header>
+
+    <!-- Tabs content -->
+    <main class="tabs">
+
+      <section id="tab-home" class="tab is-active">
+        <div class="placeholder">Home will render…</div>
       </section>
 
-      <!-- CALENDAR -->
-      <section id="tab-calendar" class="tab" role="region" aria-label="Calendar">
-        <!-- Rendered by /ui/calendar.js -->
+      <section id="tab-calendar" class="tab">
+        <div class="placeholder">Calendar UI will appear here in the next files.</div>
       </section>
 
-      <!-- INSIGHTS -->
-      <section id="tab-insights" class="tab" role="region" aria-label="Insights">
-        <!-- Rendered by /ui/insights.js -->
+      <section id="tab-insights" class="tab">
+        <div class="placeholder">Insights dashboard coming up…</div>
       </section>
 
-      <!-- MANAGE -->
-      <section id="tab-manage" class="tab" role="region" aria-label="Manage">
-        <!-- Rendered by /ui/manage.js -->
+      <section id="tab-manage" class="tab">
+        <div class="placeholder">Rules, Library, Settings, and Data live here. Coming up next.</div>
       </section>
     </main>
 
-    <!-- Bottom Tab Bar (frosted) -->
-    <nav id="tabbar" class="tabbar frost" role="navigation" aria-label="Primary">
-      <button class="tabbtn is-active" data-tab="home" aria-label="Home" aria-current="page">
+    <!-- Bottom nav with center FAB button space (app.js wires behavior) -->
+    <nav class="bottombar">
+      <button class="navbtn" data-tab="home">
         <svg class="icon"><use href="#i-home"/></svg>
+        <span>Home</span>
       </button>
 
-      <button class="tabbtn" data-tab="calendar" aria-label="Calendar">
+      <button class="navbtn" data-tab="calendar">
         <svg class="icon"><use href="#i-calendar"/></svg>
+        <span>Calendar</span>
       </button>
 
-      <!-- Center FAB lives inside the bar -->
-      <div class="fab-slot" aria-hidden="true"></div>
-      <button id="fab" class="fab" aria-label="Quick Add">
-        <svg class="icon-xl"><use href="#i-plus"/></svg>
+      <button class="fab-main" id="fab-open">
+        <svg class="icon"><use href="#i-plus"/></svg>
       </button>
 
-      <button class="tabbtn" data-tab="insights" aria-label="Insights">
-        <svg class="icon"><use href="#i-stats"/></svg>
+      <button class="navbtn" data-tab="insights">
+        <svg class="icon"><use href="#i-chart"/></svg>
+        <span>Insights</span>
       </button>
 
-      <button class="tabbtn" data-tab="manage" aria-label="Manage">
-        <svg class="icon"><use href="#i-gear"/></svg>
+      <button class="navbtn" data-tab="manage">
+        <svg class="icon"><use href="#i-settings"/></svg>
+        <span>Manage</span>
       </button>
     </nav>
   </div>
 
-  <!-- ===== Drawers / Modals / Toasts ===== -->
+  <!-- ================= SHEETS & DRAWERS ================= -->
 
-  <!-- Backdrop for sheets & modals -->
-  <div id="backdrop" class="backdrop" hidden></div>
-
-  <!-- FAB Sheet: Quick Add -->
-  <aside id="sheet-fab" class="sheet bottom" role="dialog" aria-modal="true" aria-labelledby="sheet-fab-title" hidden>
-    <header class="sheet-header">
-      <h2 id="sheet-fab-title">Quick Add</h2>
-      <button class="iconbtn close" data-close="sheet-fab" aria-label="Close"><svg><use href="#i-x"/></svg></button>
-    </header>
-
-    <div class="tabs small" role="tablist" aria-label="Quick Add Tabs">
-      <button class="pilltab is-active" role="tab" aria-selected="true" data-fabtab="quick">Quick Actions</button>
-      <button class="pilltab" role="tab" aria-selected="false" data-fabtab="task">New Task</button>
-    </div>
-
-    <!-- Quick Actions (Library) -->
-    <section id="fabtab-quick" class="fabtab is-active" role="tabpanel" aria-label="Quick Actions">
-      <div id="fab-quick-list" class="list cards">
-        <!-- Library items render here -->
+  <!-- FAB sheet (Add / Quick Action) -->
+  <div id="sheet-fab" class="sheet" hidden>
+    <div class="sheet-inner">
+      <div class="sheet-header">
+        <div class="title">Quick Add</div>
+        <button class="iconbtn close" onclick="this.closest('.sheet').hidden=true;"><svg class="icon"><use href='#i-close'/></svg></button>
       </div>
-    </section>
+      <div class="sheet-tabs">
+        <button class="pilltab is-active" data-fabtab="quick">Quick Action</button>
+        <button class="pilltab" data-fabtab="task">New Task</button>
+      </div>
 
-    <!-- New Task form (one-off or repeat) -->
-    <section id="fabtab-task" class="fabtab" role="tabpanel" aria-label="New Task">
-      <form id="fab-task-form" class="vform" autocomplete="off">
-        <label class="field">
-          <span>Title</span>
-          <input id="fab-task-title" name="title" type="text" placeholder="e.g., Finish Q4 maths" required />
-        </label>
-
-        <label class="field">
-          <span>Points</span>
-          <input id="fab-task-points" name="points" type="number" inputmode="numeric" min="1" max="9999" step="1" value="10" required />
-        </label>
-
-        <label class="field">
-          <span>Date</span>
-          <input id="fab-task-date" name="date" type="date" required />
-        </label>
-
-        <div class="field row between">
-          <label class="check">
-            <input id="fab-task-repeat-toggle" type="checkbox" />
-            <span>Repeat on days</span>
-          </label>
-          <span class="meta">(creates a recurring rule)</span>
+      <div class="sheet-body">
+        <!-- QUICK ACTIONS (library list) -->
+        <div id="fab-quick" class="fabpanel is-active">
+          <div class="list" id="fab-quick-list"><div class="card graytint">Your Library items will appear here.</div></div>
         </div>
 
-        <div id="fab-task-weekdays" class="weekday-chiprow" aria-hidden="true">
-          <!-- chips Sun..Sat injected by JS -->
-        </div>
+        <!-- NEW TASK -->
+        <div id="fab-task" class="fabpanel">
+          <div class="vform">
+            <div class="field"><span>Title</span><input id="fab-task-title" type="text" placeholder="e.g., Send email to teacher"/></div>
+            <div class="field"><span>Points</span><input id="fab-task-points" type="number" value="10"/></div>
+            <div class="field"><span>Date</span><input id="fab-task-date" type="date"/></div>
 
-        <div class="actions">
-          <button type="button" class="btn ghost" data-close="sheet-fab">Cancel</button>
-          <button type="submit" class="btn primary">Add</button>
-        </div>
-      </form>
-    </section>
-  </aside>
+            <label class="check"><input id="fab-task-repeat-toggle" type="checkbox" /> <span>Repeats on days</span></label>
+            <div id="fab-task-weekdays" class="weekday-chiprow" style="display:none" aria-hidden="true">
+              <button class="chip" data-w="0">Sun</button>
+              <button class="chip" data-w="1">Mon</button>
+              <button class="chip" data-w="2">Tue</button>
+              <button class="chip" data-w="3">Wed</button>
+              <button class="chip" data-w="4">Thu</button>
+              <button class="chip" data-w="5">Fri</button>
+              <button class="chip" data-w="6">Sat</button>
+            </div>
 
-  <!-- Day Drawer (from Calendar) -->
-  <aside id="drawer-day" class="sheet bottom tall" role="dialog" aria-modal="true" aria-labelledby="drawer-day-title" hidden>
-    <header class="sheet-header">
-      <h2 id="drawer-day-title">Day Summary</h2>
-      <button class="iconbtn close" data-close="drawer-day" aria-label="Close"><svg><use href="#i-x"/></svg></button>
-    </header>
-    <div id="day-summary" class="day-summary">
-      <!-- Points, coins, counts -->
+            <div class="row gap">
+              <button id="fab-task-save" class="btn primary"><svg class="icon"><use href="#i-check"/></svg><span>Add</span></button>
+              <button class="btn ghost" onclick="this.closest('.sheet').hidden=true;">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
+  </div>
 
-    <div class="section">
-      <h3 class="section-title">Tasks</h3>
-      <div id="day-tasks" class="list cards"></div>
-      <div class="row end">
-        <button id="day-add-task" class="btn small"><svg class="icon"><use href="#i-plus"/></svg><span>Add task</span></button>
+  <!-- Day Drawer (Calendar breakdown) -->
+  <div id="drawer-day" class="drawer" hidden>
+    <div class="drawer-inner">
+      <div class="drawer-head">
+        <div id="drawer-day-title" class="title">Today</div>
+        <button class="iconbtn close" onclick="this.closest('.drawer').hidden=true;"><svg class="icon"><use href='#i-close'/></svg></button>
+      </div>
+
+      <div class="drawer-body">
+        <div id="day-summary" class="row gap"></div>
+
+        <h4 class="section-sub">Tasks</h4>
+        <div id="day-tasks" class="list"></div>
+        <button id="day-add-task" class="btn primary" style="margin-top:8px;">
+          <svg class="icon"><use href="#i-plus"/></svg><span>Add task</span>
+        </button>
+
+        <h4 class="section-sub">Habits</h4>
+        <div id="day-habits" class="list"></div>
+
+        <h4 class="section-sub">Daily Quests</h4>
+        <div id="day-quests" class="list"></div>
+
+        <h4 class="section-sub">Weekly Boss</h4>
+        <div id="day-boss" class="list"></div>
       </div>
     </div>
+  </div>
 
-    <div class="section">
-      <h3 class="section-title">Habits</h3>
-      <div id="day-habits" class="list cards"></div>
-    </div>
-
-    <div class="section">
-      <h3 class="section-title">Daily Quests</h3>
-      <div id="day-quests" class="list cards"></div>
-    </div>
-
-    <div class="section">
-      <h3 class="section-title">Weekly Boss</h3>
-      <div id="day-boss" class="list cards"></div>
-    </div>
-  </aside>
-
-  <!-- Rewards Drawer (from Coins pill) -->
-  <aside id="drawer-rewards" class="sheet bottom" role="dialog" aria-modal="true" aria-labelledby="drawer-rewards-title" hidden>
-    <header class="sheet-header">
-      <h2 id="drawer-rewards-title">Rewards</h2>
-      <button class="iconbtn close" data-close="drawer-rewards" aria-label="Close"><svg><use href="#i-x"/></svg></button>
-    </header>
-    <div class="section">
-      <h3 class="section-title">Boosts</h3>
-      <div id="rewards-boosts" class="list cards"></div>
-    </div>
-    <div class="section">
-      <h3 class="section-title">Repairs</h3>
-      <div id="rewards-repairs" class="list cards"></div>
-    </div>
-    <div class="section">
-      <h3 class="section-title">Custom Rewards</h3>
-      <form id="reward-custom-form" class="row gap">
-        <input type="text" id="reward-custom-title" placeholder="e.g., Cafe treat ☕" required />
-        <input type="number" id="reward-custom-cost" placeholder="Coins" min="1" step="1" required />
-        <button class="btn small primary" type="submit">Buy</button>
-      </form>
-      <div id="rewards-history" class="list timeline"></div>
-    </div>
-  </aside>
-
-  <!-- Generic Confirm Modal -->
-  <dialog id="confirm-modal" class="modal">
-    <form method="dialog" class="modal-card">
-      <h3 id="confirm-title">Confirm</h3>
-      <p id="confirm-message">Are you sure?</p>
-      <div class="actions">
-        <button value="cancel" class="btn ghost">Cancel</button>
-        <button value="ok" class="btn danger">Yes</button>
+  <!-- Rewards / Coins Drawer -->
+  <div id="drawer-rewards" class="drawer" hidden>
+    <div class="drawer-inner">
+      <div class="drawer-head">
+        <div class="title">Rewards & Coins</div>
+        <button class="iconbtn close" onclick="this.closest('.drawer').hidden=true;"><svg class="icon"><use href='#i-close'/></svg></button>
       </div>
-    </form>
-  </dialog>
+      <div class="drawer-body">
+        <!-- /ui/rewards.js will populate -->
+      </div>
+    </div>
+  </div>
 
-  <!-- Toasts -->
-  <div id="toasts" class="toasts" aria-live="polite" aria-atomic="true"></div>
+  <!-- ================= SCRIPTS ================= -->
+  <!-- Core boot first -->
+  <script type="module" src="./ui/app.js"></script>
 
-  <!-- ===== Inline Icons (minimal set) ===== -->
-  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
-    <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h14v-9.5"/>
-    </symbol>
-    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/>
-    </symbol>
-    <symbol id="i-stats" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/>
-    </symbol>
-    <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/>
-      <path d="M19.4 15a1.5 1.5 0 0 0 .3 1.65l.02.02a2 2 0 0 1-1.42 3.41h-.02a1.5 1.5 0 0 0-1.49 1.2l-.06.24a2 2 0 0 1-3.92 0l-.06-.24a1.5 1.5 0 0 0-1.5-1.2H9.2a2 2 0 0 1-1.42-3.41l.02-.02A1.5 1.5 0 0 0 8.1 15l-.24-.58a2 2 0 0 1 0-1.84L8.1 12a1.5 1.5 0 0 0-.3-1.65l-.02-.02A2 2 0 0 1 9.2 5.92h.02a1.5 1.5 0 0 0 1.49-1.2l.06-.24a2 2 0 0 1 3.92 0l.06.24a1.5 1.5 0 0 0 1.5 1.2h.02a2 2 0 0 1 1.42 3.41l-.02.02c-.44.46-.55 1.15-.3 1.65l.24.58c.18.38.18.82 0 1.2l-.24.58Z"/>
-    </symbol>
-    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <path d="M12 5v14M5 12h14"/>
-    </symbol>
-    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <path d="M18 6 6 18M6 6l12 12"/>
-    </symbol>
-    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <path d="M20 6 9 17l-5-5"/>
-    </symbol>
-    <symbol id="i-coin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.66 3.13 3 7 3s7-1.34 7-3V6"/><path d="M5 12v6c0 1.66 3.13 3 7 3s7-1.34 7-3v-6"/>
-    </symbol>
-    <symbol id="i-streak" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M13 2s-2 3-2 6 2 5 2 5-6-2-6-7 4-7 6-4Z"/><path d="M13 13s1 2 1 4-1 5-1 5 6-2 6-7-4-7-6-2Z"/>
-    </symbol>
-    <symbol id="i-ellipsis" viewBox="0 0 24 24" fill="currentColor">
-      <circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/>
-    </symbol>
-    <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 20h9"/><path d="M16.5 3.5 20.5 7.5 8 20 4 20 4 16z"/>
-    </symbol>
-    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/>
-    </symbol>
-    <symbol id="i-lightning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/>
-    </symbol>
-  </svg>
+  <!-- Feature modules (render real screens) -->
+  <script type="module" src="./ui/home.js"></script>
+  <script type="module" src="./ui/calendar.js"></script>
+  <script type="module" src="./ui/insights.js"></script>
+  <script type="module" src="./ui/manage.js"></script>
+  <script type="module" src="./ui/rewards.js"></script>
 
-  <!-- App entrypoint -->
-  <script type="module" src="ui/app.js"></script>
-  
-  <script type="module" src="/ui/rewards.js"></script>
+  <!-- Small inline helper to open FAB (app.js also wires this) -->
+  <script>
+    (function () {
+      const fabBtn = document.getElementById('fab-open');
+      const sheet = document.getElementById('sheet-fab');
+      if (fabBtn && sheet) fabBtn.addEventListener('click', () => { sheet.hidden = false; });
+      // FAB tab switching
+      document.querySelectorAll('[data-fabtab]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.sheet-tabs .pilltab').forEach(b => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          const target = btn.getAttribute('data-fabtab');
+          document.querySelectorAll('.fabpanel').forEach(p => p.classList.remove('is-active'));
+          const panel = document.getElementById('fab-' + target);
+          if (panel) panel.classList.add('is-active');
+        });
+      });
+      // Weekday chips in FAB
+      const toggle = document.getElementById('fab-task-repeat-toggle');
+      const wk = document.getElementById('fab-task-weekdays');
+      if (toggle && wk) {
+        toggle.addEventListener('change', () => {
+          const show = toggle.checked;
+          wk.style.display = show ? '' : 'none';
+          wk.setAttribute('aria-hidden', show ? 'false' : 'true');
+        });
+        wk.querySelectorAll('.chip').forEach(chip => chip.addEventListener('click', () => chip.classList.toggle('is-active')));
+      }
+    })();
+  </script>
 </body>
 </html>
