@@ -1,77 +1,95 @@
 // /core/ledger.js
-// Immutable event log helpers + summary rebuild.
+// Ledger entries + rebuild summaries (points, coins, streaks).
 
-import { todayKey, weekdayIndex, addDays } from './time.js';
+import { todayKey, addDays, weekdayIndex } from './time.js';
 
 export function newEntry({ type, subjectId, subjectLabel, pointsDelta = 0, coinsDelta = 0, day }) {
   const ts = Date.now();
-  const id = crypto?.randomUUID?.() || (`e_${Math.random().toString(36).slice(2)}_${ts}`);
-  return { id, ts, day: day || todayKey(), type, subjectId, subjectLabel, pointsDelta: Math.trunc(pointsDelta), coinsDelta: Math.trunc(coinsDelta) };
+  return {
+    id: `lg_${ts.toString(36)}_${Math.random().toString(36).slice(2,6)}`,
+    ts,
+    day: day || todayKey(),
+    type,
+    subjectId,
+    subjectLabel,
+    pointsDelta: Math.round(pointsDelta) || 0,
+    coinsDelta: Math.round(coinsDelta) || 0
+  };
 }
 
-/** Build progress summaries, coins, and streaks strictly from ledger */
+/**
+ * Rebuild all computed summaries from ledger:
+ * - progress[day] = {points, coinsEarned, tasksDone, habitsDone, challengesDone, bossTicks, missedTodos?}
+ * - coinsTotal
+ * - streak.current and bestStreak (rule: all scheduled habits completed for a day counts)
+ */
 export function rebuildFromLedger(state) {
-  const prog = {};
+  const progress = {};
   let coinsTotal = 0;
 
-  // day -> set of {habitDoneIds}, counts for done types, points sum
   for (const e of state.ledger) {
-    const d = e.day;
-    if (!prog[d]) prog[d] = { points: 0, coinsEarned: 0, tasksDone:0, habitsDone:0, challengesDone:0, bossTicks:0, missedTodos: prog[d]?.missedTodos || 0 };
-    prog[d].points += (e.pointsDelta || 0);
-    coinsTotal += (e.coinsDelta || 0);
-    if (e.coinsDelta > 0) prog[d].coinsEarned += e.coinsDelta;
+    const day = e.day || todayKey();
+    if (!progress[day]) progress[day] = blankDay();
+    const p = progress[day];
+    const pts = e.pointsDelta || 0;
+    const cds = e.coinsDelta || 0;
 
-    switch (e.type) {
-      case 'task': prog[d].tasksDone++; break;
-      case 'habit': prog[d].habitsDone++; break;
-      case 'challenge': prog[d].challengesDone++; break;
-      case 'boss': prog[d].bossTicks++; break;
-      default: break;
+    if (pts) p.points = (p.points || 0) + pts;
+    if (cds > 0) p.coinsEarned = (p.coinsEarned || 0) + cds;
+    coinsTotal += cds;
+
+    if (pts > 0) {
+      if (e.type === 'task') p.tasksDone = (p.tasksDone || 0) + 1;
+      if (e.type === 'habit') p.habitsDone = (p.habitsDone || 0) + 1;
+      if (e.type === 'challenge') p.challengesDone = (p.challengesDone || 0) + 1;
+      if (e.type === 'boss') p.bossTicks = (p.bossTicks || 0) + 1;
     }
   }
 
-  // Streak compute: consecutive days ending yesterday where all scheduled habits are complete
-  // Determine per-day “scheduled habits count” from state.habits + weekdays
-  const days = Object.keys(prog).sort(); // ascending
-  const today = todayKey();
-  const yday = addDays(today, -1);
-  let streakCur = 0;
-  for (let i = 0; i < days.length; i++) {
-    // We’ll walk from the end backward to count consecutive chain up to yesterday
-  }
-  // Simple approach: iterate backward from yday while day is present & counts meet rule
-  let cursor = yday;
-  while (true) {
-    const w = weekdayIndex(cursor);
-    const scheduled = state.habits.filter(h => h.active && (!h.byWeekday || h.byWeekday.includes(w)));
-    const need = scheduled.length;
-    const doneCount = (prog[cursor]?.habitsDone) || 0;
-    if (need === 0) {
-      // No habits scheduled: treat as neutral (doesn't break streak, doesn't advance)
-      // Move back one day but do not increment
-      cursor = addDays(cursor, -1);
-      if (days.length === 0 || cursor < days[0]) break;
-      continue;
-    }
-    if (doneCount >= need) {
-      streakCur++;
-      cursor = addDays(cursor, -1);
-      if (days.length === 0 || cursor < days[0]) break;
-      continue;
-    }
-    break; // chain broken
-  }
-
-  // Best streak stored in profile.bestStreak; we won't compute historic best here.
-  const bestStreak = Math.max(state.profile?.bestStreak || 0, streakCur);
-
-  return { progress: prog, coinsTotal, streak: { current: streakCur }, bestStreak };
+  const { current, best } = computeStreak(state, progress);
+  return { progress, coinsTotal, streak: { current }, bestStreak: best };
 }
 
-/** Mark a day’s missed todos (called by engine-day at rollover) */
-export function progressSetMissed(prog, day, count) {
-  prog[day] = prog[day] || { points:0, coinsEarned:0, tasksDone:0, habitsDone:0, challengesDone:0, bossTicks:0, missedTodos:0 };
-  prog[day].missedTodos = count;
-  return prog;
+function blankDay() {
+  return { points: 0, coinsEarned: 0, tasksDone:0, habitsDone:0, challengesDone:0, bossTicks:0, missedTodos:0 };
+}
+
+/** Streak = consecutive days up to today where ALL scheduled habits for that day were completed */
+function computeStreak(state, progress) {
+  const today = todayKey();
+  let cur = 0, best = 0, run = 0;
+
+  // Scan back ~365 days; treat days with zero scheduled habits as neutral (do not break or advance)
+  let cursor = today;
+  for (let i = 0; i < 365; i++) {
+    const sched = scheduledHabitsForDay(state, cursor);
+    if (sched === 0) {
+      // neutral; do not affect runs unless in a run already.
+      cursor = addDays(cursor, -1);
+      continue;
+    }
+    const done = (progress[cursor]?.habitsDone) || 0;
+    if (done >= sched) {
+      run++;
+      if (cursor === today) cur = run; // measure current
+    } else {
+      best = Math.max(best, run);
+      run = 0;
+      if (cursor === today) cur = 0;
+    }
+    cursor = addDays(cursor, -1);
+  }
+  best = Math.max(best, run);
+  return { current: cur, best };
+}
+
+function scheduledHabitsForDay(state, dayKey) {
+  const w = weekdayIndex(dayKey);
+  let count = 0;
+  for (const h of state.habits) {
+    if (!h.active) continue;
+    if (h.byWeekday && !h.byWeekday.includes(w)) continue;
+    count++;
+  }
+  return count;
 }
